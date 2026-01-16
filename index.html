@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteio Oficial | Opala (Mundo Automotivo)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --opal-green: #1db954;
+            --gold: #d4af37;
+            --graphite: #0b0c0f;
+            --steel: #151824;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+        }
+
+        .display-font {
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 0.02em;
+        }
+
+        /* Ambient Background (Opala vibe) */
+        .ambient-light {
+            background:
+                radial-gradient(circle at 20% -10%, rgba(29, 185, 84, 0.28) 0%, transparent 45%),
+                radial-gradient(circle at 110% 30%, rgba(212, 175, 55, 0.20) 0%, transparent 45%),
+                radial-gradient(circle at 0% 120%, rgba(59, 130, 246, 0.12) 0%, transparent 45%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.9;
+        }
+
+        /* subtle garage grid + racing stripes */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+                repeating-linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0 10px, rgba(212, 175, 55, 0.00) 10px 26px);
+            background-size: 44px 44px, 44px 44px, 220px 220px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            mask-image: linear-gradient(to bottom, black 35%, transparent 100%);
+            opacity: 0.9;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-strong {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animations */
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+            animation: shine 2.5s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .live-dot::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: inherit;
+            border-radius: 50%;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            z-index: -1;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .animate-marquee {
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes spin-slow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 4s linear infinite;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col relative selection:bg-green-500 selection:text-black">
+
+    <div class="ambient-light"></div>
+    <div class="grid-bg"></div>
+
+    <!-- Sticky Navbar -->
+    <nav class="fixed top-0 w-full z-50 glass-strong h-16 flex items-center justify-between px-4 lg:px-8">
+        <div class="flex items-center gap-3">
+            <div class="relative group cursor-pointer">
+                <img src="https://yt3.googleusercontent.com/kKNBSWKT4jnJCqzNJEWpOCekJwmv50WgmoXrJWDEPQ8gnv456Tb15UX1cnlRi9veUei60-vMaPI=s160-c-k-c0x00ffffff-no-rj"
+                    class="w-10 h-10 rounded-full border border-white/20 transition group-hover:border-green-500"
+                    alt="Profile">
+                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-black rounded-full">
+                </div>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm tracking-wide leading-none flex items-center gap-1">
+                    @alemaodacaravan
+
+                    <i class="fa-solid fa-circle-check text-blue-500 text-xs"></i>
+                </h1>
+                <span class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Opala
+                    & Clássicos • Mundo Automotivo</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <a href="https://www.instagram.com/alemaodacaravan/"
+                class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#E1306C]/20 hover:text-[#E1306C] hover:border-[#E1306C]/30 transition border border-white/5 text-gray-300 group">
+                <i class="fa-brands fa-instagram text-lg group-hover:scale-110 transition-transform"></i>
+            </a>
+            <a href="https://www.youtube.com/@ALEMAODACARAVANN"
+                class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#FF0000]/20 hover:text-[#FF0000] hover:border-[#FF0000]/30 transition border border-white/5 text-gray-300 group">
+                <i class="fa-brands fa-youtube text-lg group-hover:scale-110 transition-transform"></i>
+            </a>
+            <a href="https://www.tiktok.com/@alemaodacaravan"
+                class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#00f2ea]/20 hover:text-[#00f2ea] hover:border-[#00f2ea]/30 transition border border-white/5 text-gray-300 group">
+                <i class="fa-brands fa-tiktok text-lg group-hover:scale-110 transition-transform"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main
+        class="flex-grow pt-24 pb-12 px-4 md:px-8 max-w-7xl mx-auto w-full z-10 flex flex-col lg:flex-row gap-6 lg:gap-8">
+
+        <!-- Left Column: Main Raffle (Hero) -->
+        <section class="w-full lg:w-2/3 flex flex-col gap-5">
+
+            <!-- Hero Card -->
+            <div
+                class="relative group rounded-[2rem] overflow-hidden glass border border-white/10 shadow-2xl transition-all duration-500 hover:border-green-500/30">
+
+                <!-- Image Area -->
+                <div class="relative h-[220px] sm:h-[340px] w-full overflow-hidden">
+                    <img src="https://cdn.acaoentreamigos.online/assets/images/award/e6bdd2152d552781520735b2d9237935.webp"
+                        class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
+                        alt="Carro clássico (Opala vibe)">
+
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/20"></div>
+
+                    <!-- Live Badge -->
+                    <div
+                        class="absolute top-5 left-5 bg-red-600/90 text-white text-[10px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-2 shadow-lg z-20 uppercase tracking-widest border border-red-400/30">
+                        <span class="w-1.5 h-1.5 bg-white rounded-full live-dot relative"></span> Ao Vivo
+                    </div>
+
+                    <!-- Main Title Overlay -->
+                    <div class="absolute bottom-6 left-6 right-6 z-20">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span
+                                class="px-2 py-0.5 bg-[var(--gold)] text-black text-[10px] font-bold rounded uppercase">Prêmio
+                                Principal</span>
+                        </div>
+                        <h2
+                            class="text-3xl sm:text-5xl font-bold text-white mb-1 leading-tight tracking-tight drop-shadow-lg display-font">
+                            OPALA SS + CARAVAN SS</h2>
+                        <p class="text-gray-300 text-sm sm:text-base font-medium drop-shadow-md">Edição colecionador</p>
+                    </div>
+                </div>
+
+                <!-- Info & Action Area -->
+                <div class="p-6 bg-[#0a0a0a] border-t border-white/5 relative overflow-hidden">
+                    <!-- Background Glow -->
+                    <div
+                        class="absolute -top-20 -right-20 w-64 h-64 bg-green-500/10 rounded-full blur-3xl pointer-events-none">
+                    </div>
+
+                    <div class="flex flex-col md:flex-row gap-6 items-end">
+
+                        <!-- Left Side: Timer & Progress -->
+                        <div class="w-full md:w-3/5 space-y-5">
+                            <!-- Countdown -->
+                            <div class="grid grid-cols-4 gap-3">
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="days">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Dias</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="hours">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Hrs</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="minutes">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Min</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="seconds">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Seg</div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-2">
+                                    <span class="text-gray-400 uppercase tracking-wide">Status da Ação</span>
+                                    <span class="text-[var(--gold)]">100% Vendido</span>
+                                </div>
+                                <div
+                                    class="h-3 bg-gray-800 rounded-full overflow-hidden relative border border-white/5">
+                                    <div
+                                        class="absolute top-0 left-0 h-full bg-gradient-to-r from-[var(--gold)] to-[var(--opal-green)] w-[100%] shine-effect rounded-full">
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1.5 text-right"><i
+                                        class="fa-solid fa-fire text-orange-500 mr-1"></i> Esgotado!</p>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Big Button -->
+                        <div class="w-full md:w-2/5">
+                            <a href="https://alemaodacaravan.art.br/opala-ss-caravan-ss-196656.html?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnnm5U41Png69y2BjyECg5D8VJH-01dSIjE_af_8uWsXO2bZN2-TxwbqBmHYQ_aem_wz5DilJw1je-dazqYRBlzg"
+                                class="group relative block w-full py-5 bg-gradient-to-r from-[var(--gold)] to-[var(--opal-green)] text-black font-bold text-center text-lg rounded-xl transition-all hover:shadow-[0_0_30px_rgba(212,175,55,0.35)] overflow-hidden">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    COMPRAR AGORA
+                                    <i
+                                        class="fa-solid fa-ticket transform group-hover:rotate-12 transition-transform"></i>
+                                </span>
+                                <div
+                                    class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full">
+                                </div>
+                            </a>
+                            <p class="text-[10px] text-center text-gray-500 mt-2">Compra 100% segura e automática</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Friends Highlighted Card -->
+            <a href="https://lastlink.com/p/CF21501AE" target="_blank"
+                class="group relative w-full overflow-hidden rounded-2xl p-[1px] transition-all hover:scale-[1.01] active:scale-[0.99]">
+                <!-- Animated Border -->
+                <div
+                    class="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_340deg,#22c55e_360deg)] animate-spin-slow opacity-70">
+                </div>
+
+                <!-- Card Content -->
+                <div
+                    class="relative h-full bg-[#0a0a0a] rounded-2xl p-4 flex items-center justify-between overflow-hidden">
+                    <!-- Background Effects -->
+                    <div class="absolute inset-0 bg-green-500/10 group-hover:bg-green-500/20 transition-colors"></div>
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-green-500/20 blur-3xl rounded-full"></div>
+
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div
+                            class="w-14 h-14 rounded-full border-2 border-green-400 p-0.5 shadow-[0_0_15px_rgba(74,222,128,0.5)]">
+                            <div
+                                class="w-full h-full bg-gradient-to-br from-green-600 to-emerald-800 rounded-full flex items-center justify-center text-white">
+                                <i class="fa-solid fa-star text-xl animate-pulse"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-white text-lg leading-none display-font tracking-wide">
+                                    MELHORES AMIGOS</h3>
+                                <span
+                                    class="bg-[var(--gold)] text-black text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">GARAGEM
+                                    VIP</span>
+                            </div>
+                            <p class="text-gray-200/80 text-xs mt-1 font-medium">Bastidores da garagem, projetos, dicas
+                                de mecânica e dia dia</p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="relative z-10 hidden sm:flex items-center gap-2 bg-green-500/20 border border-green-500/30 px-4 py-2 rounded-lg group-hover:bg-green-500 group-hover:text-black transition-all">
+                        <span class="text-xs font-bold uppercase tracking-wide">Entrar</span>
+                        <i class="fa-solid fa-lock text-xs"></i>
+                    </div>
+                    <div class="sm:hidden text-green-400">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </div>
+            </a>
+
+
+            <div class="glass p-1 rounded-[2rem] border border-white/10 relative group overflow-hidden mt-2">
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition duration-500">
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-6 p-5 relative z-10">
+                    <div
+                        class="w-full sm:w-1/3 aspect-[4/3] rounded-xl overflow-hidden relative shadow-lg group-hover:shadow-purple-500/20 transition-all">
+                        <img src="https://cdn.vnda.com.br/550x/lolja/2023/02/22/22_03_33_221_b1-35a427a928cbb10b6116684534646422-1024-1024.jpg?v=1677114213"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                            alt="Camiseta Oficial">
+                        <div
+                            class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg animate-pulse">
+                            LANÇAMENTO</div>
+                    </div>
+                    <div class="flex-1 text-center sm:text-left">
+                        <div class="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                            <i class="fa-solid fa-shirt text-purple-400"></i>
+                            <span class="text-purple-400 text-xs font-bold tracking-wider uppercase">Loja Oficial</span>
+                            <span
+                                class="bg-purple-500/20 text-purple-300 text-[10px] px-2 py-0.5 rounded border border-purple-500/30">Edição
+                                Limitada</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 leading-tight">Camiseta Preta "ALEMÃO
+                            DA CARAVAN"
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4 leading-relaxed">Design exclusivo para apoiadores VIP.
+                            Malha premium, caimento perfeito e durabilidade extrema.</p>
+                        <a href="https://www.lolja.com.br/alemao-da-caravan" target="_blank"
+                            class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition w-full sm:w-auto shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 duration-300">
+                            <span>QUERO A MINHA</span>
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </a>
+                        <p class="text-[10px] text-gray-500 mt-2"><i class="fa-solid fa-truck-fast mr-1"></i> Confirme o
+                            Prazo de Envio</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Promos Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                <div
+                    class="glass p-5 rounded-2xl flex items-center gap-4 hover:bg-white/5 transition cursor-pointer border border-white/5 group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-gift text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white leading-tight">Prêmio Extra</h4>
+                        <p class="text-xs text-gray-400 mt-1">5 iPhones 15 para os maiores compradores</p>
+                    </div>
+                </div>
+                <div
+                    class="glass p-5 rounded-2xl flex items-center gap-4 hover:bg-white/5 transition cursor-pointer border border-white/5 group">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bolt text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white leading-tight">Promoção Relâmpago</h4>
+                        <p class="text-xs text-gray-400 mt-1">Compre 100 cotas e ganhe +10 grátis</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Navigation Grid & Social Proof -->
+        <aside class="w-full lg:w-1/3 flex flex-col gap-6">
+
+            <div>
+                <h3 class="text-gray-500 uppercase text-[10px] font-bold tracking-[0.2em] mb-3 ml-1">Links Rápidos</h3>
+                <!-- Modern App Grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Close Friends moved to main column -->
+
+                    <!-- Shopee -->
+                    <a href="#"
+                        class="group glass p-5 rounded-2xl hover:bg-[#EE4D2D]/5 hover:border-[#EE4D2D]/50 transition border border-white/5 flex flex-col items-center justify-center gap-3 aspect-square text-center relative overflow-hidden">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-[#EE4D2D]/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500">
+                        </div>
+                        <i
+                            class="fa-solid fa-bag-shopping text-4xl text-[#EE4D2D] group-hover:scale-110 transition-transform drop-shadow-[0_0_10px_rgba(238,77,45,0.5)]"></i>
+                        <div class="relative z-10">
+                            <span class="block font-bold text-sm text-gray-100">Shopee</span>
+                            <span class="block text-[10px] text-gray-500 mt-0.5">Meus Achadinhos</span>
+                        </div>
+                    </a>
+
+                    <!-- Ganhadores -->
+                    <a href="#"
+                        class="group glass p-5 rounded-2xl hover:bg-yellow-500/5 hover:border-yellow-500/50 transition border border-white/5 flex flex-col items-center justify-center gap-3 aspect-square text-center relative overflow-hidden">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500">
+                        </div>
+                        <i
+                            class="fa-solid fa-trophy text-4xl text-yellow-500 group-hover:scale-110 transition-transform drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]"></i>
+                        <div class="relative z-10">
+                            <span class="block font-bold text-sm text-gray-100">Ganhadores</span>
+                            <span class="block text-[10px] text-gray-500 mt-0.5">Lista Oficial</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+
+
+
+        </aside>
+
+    </main>
+
+    <!-- Social Proof Ticker -->
+    <div class="w-full bg-black/40 border-y border-white/5 backdrop-blur-md overflow-hidden py-3">
+        <div class="flex space-x-12 animate-marquee whitespace-nowrap">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">João M. ganhou <span class="text-green-400">R$
+                        500,00</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Maria S. ganhou <span class="text-green-400">iPhone 15
+                        Pro</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Pedro H. ganhou <span class="text-green-400">R$
+                        1.000,00</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Ana C. ganhou <span class="text-green-400">Honda
+                        Biz</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Carlos R. ganhou <span class="text-green-400">R$
+                        200,00</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Beatriz L. ganhou <span class="text-green-400">PlayStation
+                        5</span></span>
+            </div>
+            <!-- Duplicates for seamless loop -->
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">João M. ganhou <span class="text-green-400">R$
+                        500,00</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Maria S. ganhou <span class="text-green-400">iPhone 15
+                        Pro</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Pedro H. ganhou <span class="text-green-400">R$
+                        1.000,00</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Ana C. ganhou <span class="text-green-400">Honda
+                        Biz</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Carlos R. ganhou <span class="text-green-400">R$
+                        200,00</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Beatriz L. ganhou <span class="text-green-400">PlayStation
+                        5</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-black/50 py-8 px-6 lg:px-12 backdrop-blur-md mt-auto relative">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="text-center md:text-left order-2 md:order-1">
+                <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                    <i class="fa-solid fa-lock text-gray-600 text-xs"></i>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">Site Verificado e Seguro</span>
+                </div>
+                <p class="text-gray-600 text-[10px]">© 2026 Alemao da Caravan. Todos os direitos reservados.</p>
+            </div>
+
+            <!-- Footer Support -->
+            <div class="order-1 md:order-2">
+                <a href="#" title="Suporte Online"
+                    class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition border border-white/5 group">
+                    <i class="fa-solid fa-headset text-xl group-hover:scale-110 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Countdown Logic
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        // Set deadline
+        const deadline = new Date();
+        deadline.setDate(deadline.getDate() + 2); // 2 days from now
+
+        function updateCountdown() {
+            const now = new Date();
+            const diff = deadline - now;
+
+            if (diff <= 0) {
+                deadline.setDate(deadline.getDate() + 2);
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+
+            daysEl.innerText = d < 10 ? '0' + d : d;
+            hoursEl.innerText = h < 10 ? '0' + h : h;
+            minutesEl.innerText = m < 10 ? '0' + m : m;
+            secondsEl.innerText = s < 10 ? '0' + s : s;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+
+
+</body>
+
+</html>
