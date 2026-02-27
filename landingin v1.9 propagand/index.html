@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteio Oficial | Opala (Mundo Automotivo)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Teko:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --opal-green: #1db954;
+            --gold: #d4af37;
+            --graphite: #0b0c0f;
+            --steel: #151824;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            /* Proteção Básica: Impede seleção de texto */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Impede arrasto de imagens */
+        img {
+            -webkit-user-drag: none;
+        }
+
+        #hero-link img,
+        #store-link img {
+            pointer-events: none;
+            /* Mantém proteção, mas o link pai captura */
+        }
+
+        .display-font {
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 0.02em;
+        }
+
+        /* Ambient Background (Opala vibe) */
+        .ambient-light {
+            background:
+                radial-gradient(circle at 20% -10%, rgba(29, 185, 84, 0.28) 0%, transparent 45%),
+                radial-gradient(circle at 110% 30%, rgba(212, 175, 55, 0.20) 0%, transparent 45%),
+                radial-gradient(circle at 0% 120%, rgba(59, 130, 246, 0.12) 0%, transparent 45%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.9;
+        }
+
+        /* subtle garage grid + racing stripes */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+                repeating-linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0 10px, rgba(212, 175, 55, 0.00) 10px 26px);
+            background-size: 44px 44px, 44px 44px, 220px 220px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            mask-image: linear-gradient(to bottom, black 35%, transparent 100%);
+            opacity: 0.9;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-strong {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animations */
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+            animation: shine 2.5s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .live-dot::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: inherit;
+            border-radius: 50%;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            z-index: -1;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .animate-marquee {
+            animation: marquee 20s linear infinite;
+        }
+
+        #ticker-section {
+            cursor: grab;
+            user-select: none;
+            touch-action: pan-y;
+        }
+
+        #ticker-section:active {
+            cursor: grabbing;
+        }
+
+        @keyframes spin-slow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 4s linear infinite;
+        }
+
+        /* Tickets de Promoção estilo Físico */
+        .ticket-red {
+            background: #cc0000;
+            color: white;
+            padding: 8px 24px;
+            position: relative;
+            border-radius: 4px;
+            font-family: 'Teko', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 150px;
+            height: 55px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ticket-red::before,
+        .ticket-red::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background: #0a0a0a;
+            border-radius: 50%;
+        }
+
+        .ticket-red::before {
+            left: -10px;
+        }
+
+        .ticket-red::after {
+            right: -10px;
+        }
+
+        .promo-highlight {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 1.2rem;
+            letter-spacing: 0.05em;
+            line-height: 1;
+            text-align: center;
+        }
+
+        /* Animações para os Tickets */
+        @keyframes ticket-pulse {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(-12deg);
+                filter: brightness(1);
+            }
+
+            50% {
+                transform: scale(1.05) rotate(-10deg);
+                filter: brightness(1.2);
+            }
+        }
+
+        @keyframes ticket-pulse-2 {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(8deg);
+                filter: brightness(1);
+            }
+
+            50% {
+                transform: scale(1.05) rotate(10deg);
+                filter: brightness(1.2);
+            }
+        }
+
+        .animate-ticket-1 {
+            animation: ticket-pulse 3s ease-in-out infinite;
+        }
+
+        .animate-ticket-2 {
+            animation: ticket-pulse-2 3s ease-in-out infinite 0.5s;
+        }
+
+        /* Selo % piscando */
+        @keyframes badge-pulse {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(12deg);
+                box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+            }
+
+            50% {
+                transform: scale(1.2) rotate(20deg);
+                box-shadow: 0 0 20px rgba(250, 204, 21, 0.8);
+            }
+        }
+
+        .animate-badge {
+            animation: badge-pulse 2s ease-in-out infinite;
+        }
+
+        /* Faixa ESGOTADO */
+        .ribbon-sold-out {
+            position: absolute;
+            top: 70px;
+            right: -120px;
+            background: #cc0000;
+            color: white;
+            padding: 15px 150px;
+            transform: rotate(45deg);
+            font-weight: 900;
+            font-size: 24px;
+            z-index: 100;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            display: none;
+            font-family: 'Teko', sans-serif;
+            width: 500px;
+            text-align: center;
+        }
+
+        .sold-out-active {
+            filter: grayscale(0.2) contrast(0.9);
+            pointer-events: none;
+        }
+
+        /* Banner de Cookies */
+        #cookie-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            z-index: 9999;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            margin: 0 auto;
+            transform: translateY(100px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #cookie-banner.show {
+            display: flex !important;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            #cookie-banner {
+                flex-direction: column;
+                text-align: center;
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                padding: 1.2rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* --- Chatbot Styles --- */
+        #chatbot-container {
+            position: fixed;
+            bottom: 85px;
+            right: 20px;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: bottom right;
+        }
+
+        #chatbot-container.active {
+            display: flex;
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background: linear-gradient(90deg, #1db954, #15803d);
+            color: black;
+            font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .chat-messages {
+            padding: 20px;
+            max-height: 350px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 15px;
+            font-size: 13px;
+            line-height: 1.4;
+            position: relative;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.05);
+            color: #eee;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .user-message {
+            background: #1db954;
+            color: black;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            font-weight: 600;
+        }
+
+        .chat-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .option-btn {
+            background: rgba(29, 185, 84, 0.1);
+            border: 1px solid rgba(29, 185, 84, 0.3);
+            color: #1db954;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .option-btn:hover {
+            background: #1db954;
+            color: black;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: none;
+            /* Inicia oculto, focado em botões */
+        }
+
+        /* Indicador de Digitação */
+        .typing {
+            display: flex;
+            gap: 4px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            width: fit-content;
+            margin-bottom: 12px;
+        }
+
+        .typing span {
+            width: 6px;
+            height: 6px;
+            background: #555;
+            border-radius: 50%;
+            animation: typing 1s infinite alternate;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            from {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Ajuste no rodapé para o ícone */
+        .support-pulse {
+            position: relative;
+        }
+
+        .support-pulse::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 2px solid #1db954;
+            border-radius: 14px;
+            animation: pulse-ring 2s infinite;
+            opacity: 0;
+        }
+
+        /* --- Lateral Ad Carousel Styles --- */
+        #side-ad-container {
+            position: fixed;
+            top: 5rem;
+            left: 1.5rem;
+            width: 180px;
+            height: clamp(300px, 50vh, 400px);
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
+            pointer-events: auto;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Responsive: No mobile, vira um banner retangular maior centralizado na base */
+        @media (max-width: 1279px) {
+            #side-ad-container {
+                top: auto;
+                bottom: 0px;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: 220px;
+                /* Aumentado conforme solicitado */
+                max-width: 450px;
+                margin: 0 auto;
+                z-index: 30;
+                /* Fica por trás do banner de cookies (9999) */
+                padding: 10px;
+            }
+
+            .ad-carousel {
+                border-radius: 1.5rem 1.5rem 0 0;
+                border-bottom: none;
+                box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+            }
+
+            .ad-indicator {
+                bottom: 15px;
+            }
+
+            .ad-close-btn {
+                top: 0px;
+                right: 20px;
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+        }
+
+        /* Ajuste fino para celulares muito pequenos */
+        @media (max-width: 480px) {
+            #side-ad-container {
+                height: 200px;
+                max-width: 95%;
+            }
+        }
+
+        .ad-carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .ad-carousel:hover {
+            transform: translateY(-5px);
+            border-color: rgba(29, 185, 84, 0.5);
+        }
+
+        .ad-slides {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ad-slide {
+            width: 33.333%;
+            height: 100%;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .ad-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ad-close-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
+            background: #cc0000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 50;
+            border: 2px solid #0a0a0a;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+        }
+
+        .ad-close-btn:hover {
+            background: #ff0000;
+            transform: scale(1.1);
+        }
+
+        .ad-indicator {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 45;
+        }
+
+        .indicator-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .indicator-dot.active {
+            background: #1db954;
+            transform: scale(1.3);
+            box-shadow: 0 0 8px rgba(29, 185, 84, 0.8);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col relative selection:bg-green-500 selection:text-black">
+
+    <!-- Lateral Advertisement Carousel -->
+    <div id="side-ad-container">
+        <div class="ad-close-btn" onclick="document.getElementById('side-ad-container').style.display='none'">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <div class="ad-carousel">
+            <div class="ad-slides" id="ad-slides">
+                <a href="#hero-link" class="ad-slide">
+                    <img src="ad1.png" alt="Anúncio BMW">
+                </a>
+                <a href="#hero-link-2" class="ad-slide">
+                    <img src="ad2.png" alt="Anúncio Opala">
+                </a>
+                <a href="#vip-link" class="ad-slide">
+                    <img src="ad3.png" alt="Anúncio VIP">
+                </a>
+            </div>
+            <div class="ad-indicator">
+                <div class="indicator-dot active"></div>
+                <div class="indicator-dot"></div>
+                <div class="indicator-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ambient-light"></div>
+    <div class="grid-bg"></div>
+
+    <!-- Sticky Navbar -->
+    <nav class="fixed top-0 w-full z-50 glass-strong h-16 flex items-center justify-between px-4 lg:px-8">
+        <a id="profile-link" href="https://lastlink.com/p/CF21501AE" target="_blank"
+            class="flex items-center gap-3 group/profile">
+            <div class="relative cursor-pointer">
+                <img src="https://yt3.googleusercontent.com/kKNBSWKT4jnJCqzNJEWpOCekJwmv50WgmoXrJWDEPQ8gnv456Tb15UX1cnlRi9veUei60-vMaPI=s160-c-k-c0x00ffffff-no-rj"
+                    class="w-10 h-10 rounded-full border border-white/20 transition group-hover/profile:border-green-500"
+                    alt="Profile">
+                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-black rounded-full">
+                </div>
+            </div>
+            <div>
+                <h1
+                    class="font-bold text-xs sm:text-sm tracking-wide leading-none flex items-center gap-1 transition-colors group-hover/profile:text-green-500">
+                    @alemaodacaravan
+                    <i class="fa-solid fa-circle-check text-blue-500 text-[18px] sm:text-xs"></i>
+                </h1>
+                <span
+                    class="text-[8px] sm:text-[10px] text-gray-400 uppercase tracking-tighter sm:tracking-wider font-semibold leading-tight block mt-0.5">
+                    Opala & Clássicos • Mundo Automotivo
+                </span>
+            </div>
+        </a>
+
+        <div class="flex items-center gap-4">
+            <a href="https://www.instagram.com/alemaodacaravan/"
+                class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#E1306C]/20 hover:text-[#E1306C] hover:border-[#E1306C]/30 transition border border-white/5 text-gray-300 group">
+                <i class="fa-brands fa-instagram text-lg group-hover:scale-110 transition-transform"></i>
+            </a>
+            <a href="https://www.youtube.com/@ALEMAODACARAVANN"
+                class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#FF0000]/20 hover:text-[#FF0000] hover:border-[#FF0000]/30 transition border border-white/5 text-gray-300 group">
+                <i class="fa-brands fa-youtube text-lg group-hover:scale-110 transition-transform"></i>
+            </a>
+            <a href="https://www.tiktok.com/@alemaodacaravan"
+                class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#00f2ea]/20 hover:text-[#00f2ea] hover:border-[#00f2ea]/30 transition border border-white/5 text-gray-300 group">
+                <i class="fa-brands fa-tiktok text-lg group-hover:scale-110 transition-transform"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main
+        class="flex-grow pt-24 pb-12 px-4 md:px-8 max-w-7xl mx-auto w-full z-10 flex flex-col lg:flex-row gap-6 lg:gap-8">
+
+        <!-- Main Raffle (Hero) -->
+        <section class="w-full flex flex-col gap-5">
+
+            <!-- Hero Card (Clicável em toda a área) -->
+            <a id="hero-link" href="https://alemaodacaravan.art.br/bmw-x4m-competition-2021-800-cvs-203029.html"
+                target="_blank"
+                class="relative block group rounded-[2rem] overflow-hidden glass border border-white/10 shadow-2xl transition-all duration-500 hover:border-green-500/30">
+
+                <!-- Faixa ESGOTADO -->
+                <div id="sold-out-ribbon" class="ribbon-sold-out display-font">ESGOTADO</div>
+
+                <!-- Image Area -->
+                <div class="relative h-[220px] sm:h-[340px] w-full overflow-hidden">
+                    <img id="hero-image"
+                        src="https://cdn.acaoentreamigos.online/assets/images/award/8a5a5e17b133c0e9bb0a9fa5415785df.webp"
+                        class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
+                        alt="Carro clássico (Opala vibe)">
+
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/20"></div>
+
+                    <!-- Live Badge -->
+                    <div
+                        class="absolute top-5 left-5 bg-red-600/90 text-white text-[10px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-2 shadow-lg z-20 uppercase tracking-widest border border-red-400/30">
+                        <span class="w-1.5 h-1.5 bg-white rounded-full live-dot relative"></span> Ao Vivo
+                    </div>
+
+                    <!-- Main Title Overlay -->
+                    <div class="absolute bottom-6 left-6 right-6 z-20">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span
+                                class="px-2 py-0.5 bg-[var(--gold)] text-black text-[10px] font-bold rounded uppercase">X4M
+                                2021</span>
+                        </div>
+                        <h2 id="hero-title"
+                            class="text-3xl sm:text-5xl font-bold text-white mb-1 leading-tight tracking-tight drop-shadow-lg display-font">
+                            BMW X4M COMPETITION 2021//800 CVS</h2>
+                        <p id="hero-subtitle" class="text-gray-300 text-sm sm:text-base font-medium drop-shadow-md">
+                            Perfeito para levar os filhos para escola</p>
+                    </div>
+                </div>
+
+                <!-- Info & Action Area -->
+                <div class="p-6 bg-[#0a0a0a] border-t border-white/5 relative overflow-hidden">
+                    <!-- Background Glow -->
+                    <div
+                        class="absolute -top-20 -right-20 w-64 h-64 bg-green-500/10 rounded-full blur-3xl pointer-events-none">
+                    </div>
+
+                    <div class="flex flex-col md:flex-row gap-6 items-end">
+
+                        <!-- Left Side: Timer & Progress -->
+                        <div class="w-full md:w-3/5 space-y-5">
+                            <!-- Countdown (Escondido por padrão para evitar flash) -->
+                            <div id="countdown-container" class="grid grid-cols-4 gap-3" style="display: none;">
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="days">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Dias</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="hours">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Hrs</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="minutes">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Min</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="seconds">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Seg</div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar (Escondido por padrão para evitar flash) -->
+                            <div id="progress-container" style="display: none;">
+                                <div class="flex justify-between text-xs font-semibold mb-2">
+                                    <span class="text-gray-400 uppercase tracking-wide">Status da Ação</span>
+                                    <span id="progress-label" class="text-[var(--gold)]">100% Vendido</span>
+                                </div>
+                                <div
+                                    class="h-3 bg-gray-800 rounded-full overflow-hidden relative border border-white/5">
+                                    <div id="progress-bar"
+                                        class="absolute top-0 left-0 h-full bg-gradient-to-r from-[var(--gold)] to-[var(--opal-green)] w-[100%] shine-effect rounded-full">
+                                    </div>
+                                </div>
+                                <p id="progress-sub" class="text-[10px] text-gray-500 mt-1.5 text-right"><i
+                                        class="fa-solid fa-fire text-orange-500 mr-1"></i> Esgotado!</p>
+                            </div>
+
+                            <!-- Promoção Relâmpago (2 Tickets Reais) -->
+                            <div id="promo-container"
+                                class="relative py-6 flex items-center justify-start transition-all duration-500"
+                                style="display: none;">
+                                <!-- Ticket 1 (Inclinado Esq) -->
+                                <div id="ticket-1-box"
+                                    class="relative z-10 transform -rotate-[12deg] translate-x-2 animate-ticket-1">
+                                    <div class="ticket-red">
+                                        <span id="promo-p1" class="promo-highlight">---</span>
+                                    </div>
+                                </div>
+                                <!-- Ticket 2 (Inclinado Dir) -->
+                                <div id="ticket-2-box"
+                                    class="relative z-20 transform rotate-[8deg] -translate-x-4 animate-ticket-2">
+                                    <div class="ticket-red" style="background: #e60000;">
+                                        <span id="promo-p2" class="promo-highlight">---</span>
+                                    </div>
+                                    <!-- Selo % -->
+                                    <div
+                                        class="absolute -top-3 -right-3 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-black text-[10px] font-black shadow-lg border-2 border-black animate-badge">
+                                        %
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Visual Button -->
+                        <div class="w-full md:w-2/5">
+                            <div
+                                class="relative group block w-full py-5 bg-gradient-to-r from-[var(--gold)] to-[var(--opal-green)] text-black font-bold text-center text-lg rounded-xl transition-all group-hover:shadow-[0_0_30px_rgba(212,175,55,0.35)] overflow-hidden">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    COMPRAR AGORA
+                                    <i
+                                        class="fa-solid fa-ticket transform group-hover:rotate-12 transition-transform"></i>
+                                </span>
+                                <div
+                                    class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full">
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-center text-gray-500 mt-2">Compra 100% segura e automática</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Close Friends Highlighted Card -->
+            <a id="vip-link" href="https://lastlink.com/p/CF21501AE" target="_blank"
+                class="group relative w-full overflow-hidden rounded-2xl p-[1px] transition-all hover:scale-[1.01] active:scale-[0.99]">
+                <!-- Animated Border -->
+                <div
+                    class="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_340deg,#22c55e_360deg)] animate-spin-slow opacity-70">
+                </div>
+
+                <!-- Card Content -->
+                <div
+                    class="relative h-full bg-[#0a0a0a] rounded-2xl p-4 flex items-center justify-between overflow-hidden">
+                    <!-- Background Effects -->
+                    <div class="absolute inset-0 bg-green-500/10 group-hover:bg-green-500/20 transition-colors"></div>
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-green-500/20 blur-3xl rounded-full"></div>
+
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div
+                            class="w-14 h-14 rounded-full border-2 border-green-400 p-0.5 shadow-[0_0_15px_rgba(74,222,128,0.5)]">
+                            <div
+                                class="w-full h-full bg-gradient-to-br from-green-600 to-emerald-800 rounded-full flex items-center justify-center text-white">
+                                <i class="fa-solid fa-star text-xl animate-pulse"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 id="vip-title"
+                                    class="font-bold text-white text-lg leading-none display-font tracking-wide">
+                                    MELHORES AMIGOS</h3>
+                                <span
+                                    class="bg-[var(--gold)] text-black text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">GARAGEM
+                                    VIP</span>
+                            </div>
+                            <p class="text-gray-200/80 text-xs mt-1 font-medium">Bastidores da garagem, projetos, dicas
+                                de mecânica e dia dia</p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="relative z-10 hidden sm:flex items-center gap-2 bg-green-500/20 border border-green-500/30 px-4 py-2 rounded-lg group-hover:bg-green-500 group-hover:text-black transition-all">
+                        <span class="text-xs font-bold uppercase tracking-wide">Entrar</span>
+                        <i class="fa-solid fa-lock text-xs"></i>
+                    </div>
+                    <div class="sm:hidden text-green-400">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Second Raffle (New) -->
+            <a id="hero-link-2"
+                href="https://alemaodacaravan.art.br/opala-comodoro-87-205621.html?fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGn2afeP6FAzpS0c8863LE37eWDeQGMEwtF8D9emciKdLF1cDRbnRGSSM3WBzY_aem_Ra6GHUv0rxmSTCVSxw6SNw"
+                target="_blank"
+                class="relative block group rounded-[2rem] overflow-hidden glass border border-white/10 shadow-2xl transition-all duration-500 hover:border-green-500/30 mt-2">
+
+                <!-- Faixa ESGOTADO -->
+                <div id="sold-out-ribbon-2" class="ribbon-sold-out display-font">ESGOTADO</div>
+
+                <!-- Image Area -->
+                <div class="relative h-[220px] sm:h-[340px] w-full overflow-hidden">
+                    <img id="hero-image-2"
+                        src="https://cdn.acaoentreamigos.online/assets/images/award/44cd6c554959272c533b0ea6a993770d.webp"
+                        class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
+                        alt="Carro clássico">
+
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/20"></div>
+
+                    <!-- Live Badge -->
+                    <div
+                        class="absolute top-5 left-5 bg-red-600/90 text-white text-[10px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-2 shadow-lg z-20 uppercase tracking-widest border border-red-400/30">
+                        <span class="w-1.5 h-1.5 bg-white rounded-full live-dot relative"></span> Ao Vivo
+                    </div>
+
+                    <!-- Main Title Overlay -->
+                    <div class="absolute bottom-6 left-6 right-6 z-20">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span
+                                class="px-2 py-0.5 bg-[var(--gold)] text-black text-[10px] font-bold rounded uppercase">COMODORO
+                                1987</span>
+                        </div>
+                        <h2 id="hero-title-2"
+                            class="text-3xl sm:text-5xl font-bold text-white mb-1 leading-tight tracking-tight drop-shadow-lg display-font">
+                            OPALA COMODORO 87</h2>
+                        <p id="hero-subtitle-2" class="text-gray-300 text-sm sm:text-base font-medium drop-shadow-md">
+                            Edição colecionador</p>
+                    </div>
+                </div>
+
+                <!-- Info & Action Area -->
+                <div class="p-6 bg-[#0a0a0a] border-t border-white/5 relative overflow-hidden">
+                    <!-- Background Glow -->
+                    <div
+                        class="absolute -top-20 -right-20 w-64 h-64 bg-green-500/10 rounded-full blur-3xl pointer-events-none">
+                    </div>
+
+                    <div class="flex flex-col md:flex-row gap-6 items-end">
+
+                        <!-- Left Side: Timer & Progress -->
+                        <div class="w-full md:w-3/5 space-y-5">
+                            <!-- Countdown -->
+                            <div id="countdown-container-2" class="grid grid-cols-4 gap-3" style="display: none;">
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="days-2">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Dias</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="hours-2">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Hrs</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="minutes-2">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Min</div>
+                                </div>
+                                <div
+                                    class="bg-white/5 rounded-xl p-2 text-center border border-white/5 backdrop-blur-sm">
+                                    <div class="text-lg font-mono font-bold text-white" id="seconds-2">00</div>
+                                    <div class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Seg</div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div id="progress-container-2" style="display: none;">
+                                <div class="flex justify-between text-xs font-semibold mb-2">
+                                    <span class="text-gray-400 uppercase tracking-wide">Status da Ação</span>
+                                    <span id="progress-label-2" class="text-[var(--gold)]">100% Vendido</span>
+                                </div>
+                                <div
+                                    class="h-3 bg-gray-800 rounded-full overflow-hidden relative border border-white/5">
+                                    <div id="progress-bar-2"
+                                        class="absolute top-0 left-0 h-full bg-gradient-to-r from-[var(--gold)] to-[var(--opal-green)] w-[100%] shine-effect rounded-full">
+                                    </div>
+                                </div>
+                                <p id="progress-sub-2" class="text-[10px] text-gray-500 mt-1.5 text-right"><i
+                                        class="fa-solid fa-fire text-orange-500 mr-1"></i> Esgotado!</p>
+                            </div>
+
+                            <!-- Promoção Relâmpago -->
+                            <div id="promo-container-2"
+                                class="relative py-6 flex items-center justify-start transition-all duration-500"
+                                style="display: none;">
+                                <div id="ticket-1-box-2"
+                                    class="relative z-10 transform -rotate-[12deg] translate-x-2 animate-ticket-1">
+                                    <div class="ticket-red">
+                                        <span id="promo-p1-2" class="promo-highlight">---</span>
+                                    </div>
+                                </div>
+                                <div id="ticket-2-box-2"
+                                    class="relative z-20 transform rotate-[8deg] -translate-x-4 animate-ticket-2">
+                                    <div class="ticket-red" style="background: #e60000;">
+                                        <span id="promo-p2-2" class="promo-highlight">---</span>
+                                    </div>
+                                    <div
+                                        class="absolute -top-3 -right-3 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-black text-[10px] font-black shadow-lg border-2 border-black animate-badge">
+                                        %
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Visual Button -->
+                        <div class="w-full md:w-2/5">
+                            <div
+                                class="relative group block w-full py-5 bg-gradient-to-r from-[var(--gold)] to-[var(--opal-green)] text-black font-bold text-center text-lg rounded-xl transition-all group-hover:shadow-[0_0_30px_rgba(212,175,55,0.35)] overflow-hidden">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    COMPRAR AGORA
+                                    <i
+                                        class="fa-solid fa-ticket transform group-hover:rotate-12 transition-transform"></i>
+                                </span>
+                                <div
+                                    class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full">
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-center text-gray-500 mt-2">Compra 100% segura e automática</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+
+            <a id="store-link" href="https://www.lolja.com.br/alemao-da-caravan" target="_blank"
+                class="glass p-1 rounded-[2rem] border border-white/10 relative group overflow-hidden mt-2 block">
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition duration-500">
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-6 p-5 relative z-10">
+                    <div
+                        class="w-full sm:w-1/3 aspect-[4/3] rounded-xl overflow-hidden relative shadow-lg group-hover:shadow-purple-500/20 transition-all">
+                        <img id="store-image"
+                            src="https://cdn.vnda.com.br/550x/lolja/2023/02/22/22_03_33_221_b1-35a427a928cbb10b6116684534646422-1024-1024.jpg?v=1677114213"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                            alt="Camiseta Oficial">
+                        <div
+                            class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg animate-pulse">
+                            LANÇAMENTO</div>
+                    </div>
+                    <div class="flex-1 text-center sm:text-left">
+                        <div class="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                            <i class="fa-solid fa-shirt text-purple-400"></i>
+                            <span class="text-purple-400 text-xs font-bold tracking-wider uppercase">Loja Oficial</span>
+                            <span
+                                class="bg-purple-500/20 text-purple-300 text-[10px] px-2 py-0.5 rounded border border-purple-500/30">Edição
+                                Limitada</span>
+                        </div>
+                        <h3 id="store-title" class="text-xl sm:text-2xl font-bold text-white mb-2 leading-tight">
+                            Camiseta Preta "ALEMÃO
+                            DA CARAVAN"
+                        </h3>
+                        <p id="store-desc" class="text-gray-400 text-sm mb-4 leading-relaxed">Design exclusivo para
+                            apoiadores VIP.
+                            Malha premium, caimento perfeito e durabilidade extrema.</p>
+                        <div
+                            class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-xl group-hover:bg-gray-200 transition w-full sm:w-auto shadow-[0_0_20px_rgba(255,255,255,0.3)] group-hover:scale-105 active:scale-95 duration-300">
+                            <span>QUERO A MINHA</span>
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                        <p class="text-[10px] text-gray-500 mt-2"><i class="fa-solid fa-truck-fast mr-1"></i> Confirme o
+                            Prazo de Envio</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- YouTube Video Card (Full Width Frame) -->
+            <a id="yt-link" href="https://www.youtube.com/watch?v=suteK_G99Qc" target="_blank"
+                class="group relative block w-full aspect-video rounded-[2rem] overflow-hidden glass border border-white/10 mt-2 transition-all hover:border-red-500/50 shadow-2xl">
+
+                <!-- YouTube Thumbnail -->
+                <img id="yt-thumb" src="https://img.youtube.com/vi/suteK_G99Qc/maxresdefault.jpg"
+                    class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
+                    alt="Último Vídeo do Canal">
+
+                <!-- Dark Overlay -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent group-hover:via-black/40 transition-colors">
+                </div>
+
+                <!-- Play Button Center Overlay -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div
+                        class="w-16 h-16 sm:w-20 sm:h-20 bg-red-600 rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(220,38,38,0.5)] transform group-hover:scale-110 transition-transform duration-500">
+                        <i class="fa-solid fa-play text-2xl sm:text-3xl ml-1"></i>
+                    </div>
+                </div>
+
+                <!-- Info Overlay -->
+                <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-brands fa-youtube text-red-500 text-lg"></i>
+                            <span
+                                class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Último
+                                Vídeo</span>
+                        </div>
+                        <h3 id="yt-title"
+                            class="text-xl sm:text-2xl font-bold text-white leading-tight display-font drop-shadow-lg">
+                            BROACA ANDOU NO CAMARO! SE CAGOU DE MEDO!
+                        </h3>
+                    </div>
+                    <div class="hidden sm:block">
+                        <span
+                            class="bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/10 uppercase tracking-widest">
+                            Assistir no YouTube
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Top Right Badge -->
+                <div class="absolute top-5 right-5">
+                    <div
+                        class="bg-red-600/90 text-white text-[10px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-2 shadow-lg z-20 uppercase tracking-widest border border-red-400/30">
+                        <span class="w-1.5 h-1.5 bg-white rounded-full live-dot relative"></span> NOVO
+                    </div>
+                </div>
+            </a>
+
+
+
+        </section>
+
+
+
+    </main>
+
+    <!-- Social Proof Ticker -->
+    <div id="ticker-section" class="w-full bg-black/40 border-y border-white/5 backdrop-blur-md overflow-hidden py-3">
+        <div class="flex space-x-12 animate-marquee whitespace-nowrap">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Gabriel Pereira Sorteado! <span class="text-green-400">Nº
+                        80669</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Rafel Oliveira Sorteado! <span class="text-green-400">Nº
+                        47007</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Gerson Moreira Sorteado! <span class="text-green-400">Nº
+                        98678</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Wesley Almeida Sorteado! <span class="text-green-400">Nº
+                        76247</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Marcelo Ferreira Sorteado! <span class="text-green-400">Nº
+                        11561</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Thiago Rocha Sorteado! <span class="text-green-400">Nº
+                        674557</span></span>
+            </div>
+            <!-- Duplicates for seamless loop -->
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Luiz Codognotto Sorteado! <span class="text-green-400">Nº
+                        53319</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Gabriel Garcia Sorteado! <span class="text-green-400">Nº
+                        34550</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Anderson Deyvid Sorteado! <span class="text-green-400">Nº
+                        29004</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Bruno de Lima Sorteado! <span class="text-green-400">Nº
+                        31976</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Luiz Felippe Sorteado! <span class="text-green-400">Nº
+                        45466</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Willian Araújo Sorteado! <span class="text-green-400">Nº
+                        61545</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Gleisson Bruno Sorteado! <span class="text-green-400">Nº
+                        81028</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Nicolas Alves Sorteado! <span class="text-green-400">Nº
+                        629736</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Ricardo Alves Sorteado! <span class="text-green-400">Nº
+                        117648</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Sergio Beker Sorteado! <span class="text-green-400">Nº
+                        329520</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Denise Joviniano Sorteado! <span class="text-green-400">Nº
+                        654533</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Aytan Machado Sorteado! <span class="text-green-400">Nº
+                        5407</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i>
+                <span class="text-xs text-gray-300 font-bold">Mateus Alves do Amaral! <span class="text-green-400">Nº
+                        74181</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer-section"
+        class="border-t border-white/5 bg-black/50 py-8 px-6 lg:px-12 backdrop-blur-md mt-auto relative">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="text-center md:text-left order-2 md:order-1">
+                <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                    <i class="fa-solid fa-lock text-gray-600 text-xs"></i>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">Site Verificado e Seguro</span>
+                    <!-- Link administrativo ofuscado -->
+                    <a href="mcalor.html" id="admin-entrance"
+                        class="opacity-[0.01] hover:opacity-10 transition-opacity ml-1 cursor-default">
+                        <i class="fa-solid fa-shield-halved text-[8px] text-gray-400"></i>
+                    </a>
+                </div>
+                <p class="text-gray-600 text-[10px]">© 2026 Alemao da Caravan. Todos os direitos reservados.</p>
+            </div>
+
+            <!-- Footer Support -->
+            <div class="order-1 md:order-2">
+                <a href="javascript:void(0)" onclick="toggleChat()" title="Suporte Online"
+                    class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition border border-white/5 group support-pulse">
+                    <i class="fa-solid fa-headset text-xl group-hover:scale-110 transition-transform"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-container">
+        <div class="chat-header">
+            <span><i class="fa-solid fa-robot mr-2"></i> Assistente Virtual</span>
+            <button onclick="toggleChat()" class="text-black hover:scale-110 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Mensagens aparecem aqui -->
+        </div>
+        <div class="chat-input-area" id="chat-input-container" style="display: block;">
+            <div class="flex gap-2">
+                <input type="text" id="chat-user-input" placeholder="Escreva sua dúvida..."
+                    class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-green-500">
+                <button onclick="sendManualMessage()" class="bg-green-500 text-black p-2 rounded-lg hover:bg-green-600">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="display-font">
+        <div class="flex items-center gap-4 text-left">
+            <div
+                class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 shrink-0">
+                <i class="fa-solid fa-cookie-bite text-xl"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold uppercase tracking-wider">Privacidade e Cookies</h4>
+                <p class="text-[10px] text-gray-400 leading-tight mt-1 family-grotesk">
+                    Usamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa
+                    política de privacidade.
+                </p>
+            </div>
+        </div>
+        <button onclick="acceptCookies()"
+            class="bg-green-500 hover:bg-green-600 text-black font-bold px-6 py-3 rounded-xl transition-all shadow-[0_5px_15px_rgba(34,197,94,0.3)] whitespace-nowrap text-xs uppercase tracking-widest">
+            Aceitar e Continuar
+        </button>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Configuração da URL do Apps Script
+        const SCRIPT_URL = CONFIG.SCRIPT_URL;
+
+        async function loadDynamicContent() {
+            // 1. Tentar carregar do Cache Local primeiro
+            const cachedData = localStorage.getItem('siteConfig');
+            if (cachedData) {
+                try {
+                    console.log('Carregando do cache local...');
+                    applyDataToSite(JSON.parse(cachedData));
+                } catch (e) { console.error('Erro no cache:', e); }
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL + '?t=' + new Date().getTime());
+                const result = await response.json();
+                const data = result.config || {};
+
+                if (data && Object.keys(data).length > 0) {
+                    console.log('Dados atualizados do servidor:', data);
+                    localStorage.setItem('siteConfig', JSON.stringify(data));
+                    applyDataToSite(data);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar conteúdo dinâmico:', error);
+            }
+        }
+
+        function applyDataToSite(data) {
+            if (!data) return;
+
+            if (data.hero) {
+                if (data.hero.image) document.getElementById('hero-image').src = data.hero.image;
+                if (data.hero.title) document.getElementById('hero-title').innerText = data.hero.title;
+                if (data.hero.subtitle) document.getElementById('hero-subtitle').innerText = data.hero.subtitle;
+                if (data.hero.link && data.hero.link !== "#") {
+                    document.getElementById('hero-link').href = data.hero.link;
+                }
+            }
+
+            // 1.2 Second Raffle
+            if (data.hero2) {
+                if (data.hero2.image) document.getElementById('hero-image-2').src = data.hero2.image;
+                if (data.hero2.title) document.getElementById('hero-title-2').innerText = data.hero2.title;
+                if (data.hero2.subtitle) document.getElementById('hero-subtitle-2').innerText = data.hero2.subtitle;
+                if (data.hero2.link && data.hero2.link !== "#") {
+                    document.getElementById('hero-link-2').href = data.hero2.link;
+                }
+            }
+
+            // 2. YouTube
+            if (data.youtube) {
+                if (data.youtube.id) {
+                    document.getElementById('yt-link').href = `https://www.youtube.com/watch?v=${data.youtube.id}`;
+                    document.getElementById('yt-thumb').src = `https://img.youtube.com/vi/${data.youtube.id}/maxresdefault.jpg`;
+                }
+                if (data.youtube.title) document.getElementById('yt-title').innerText = data.youtube.title;
+            }
+
+            // 3. Configurações de Venda (Timer & Progresso)
+            if (data.sales) {
+                const showTimer = String(data.sales.show_timer).toLowerCase() !== 'false';
+                const showProgress = String(data.sales.show_progress).toLowerCase() !== 'false';
+
+                document.getElementById('countdown-container').style.display = showTimer ? 'grid' : 'none';
+                document.getElementById('progress-container').style.display = showProgress ? 'block' : 'none';
+
+                const promoContainer = document.getElementById('promo-container');
+                if (promoContainer) {
+                    const showP1 = String(data.promo?.show_p1).toLowerCase() !== 'false';
+                    const showP2 = String(data.promo?.show_p2).toLowerCase() !== 'false';
+                    const anyTicketActive = (showP1 || showP2);
+                    const showPromo = (!showTimer && !showProgress && anyTicketActive);
+
+                    promoContainer.style.display = showPromo ? 'flex' : 'none';
+
+                    if (showPromo && data.promo) {
+                        document.getElementById('ticket-1-box').style.display = showP1 ? 'block' : 'none';
+                        document.getElementById('ticket-2-box').style.display = showP2 ? 'block' : 'none';
+                        if (data.promo.p1_text) document.getElementById('promo-p1').innerText = data.promo.p1_text;
+                        if (data.promo.p2_text) document.getElementById('promo-p2').innerText = data.promo.p2_text;
+                    }
+                }
+
+                const isSoldOut = String(data.sales.is_sold_out).toLowerCase() === 'true';
+                const ribbon = document.getElementById('sold-out-ribbon');
+                const heroLink = document.getElementById('hero-link');
+
+                if (isSoldOut) {
+                    ribbon.style.display = 'block';
+                    heroLink.classList.add('sold-out-active');
+                } else {
+                    ribbon.style.display = 'none';
+                    heroLink.classList.remove('sold-out-active');
+                }
+
+                if (data.sales.progress_percent) {
+                    const percent = data.sales.progress_percent;
+                    document.getElementById('progress-bar').style.width = `${percent}%`;
+                    document.getElementById('progress-label').innerText = `${percent}% Vendido`;
+                    const sub = document.getElementById('progress-sub');
+                    if (percent >= 100) {
+                        sub.innerHTML = '<i class="fa-solid fa-fire text-orange-500 mr-1"></i> Esgotado!';
+                    } else {
+                        sub.innerHTML = '<i class="fa-solid fa-bolt text-yellow-400 mr-1"></i> Corra antes que acabe!';
+                    }
+                }
+
+                if (data.sales.timer_deadline) {
+                    window.globalDeadline = new Date(data.sales.timer_deadline);
+                }
+            }
+
+            // 3.2 Configurações de Venda 2
+            if (data.sales2) {
+                const showTimer = String(data.sales2.show_timer).toLowerCase() !== 'false';
+                const showProgress = String(data.sales2.show_progress).toLowerCase() !== 'false';
+
+                document.getElementById('countdown-container-2').style.display = showTimer ? 'grid' : 'none';
+                document.getElementById('progress-container-2').style.display = showProgress ? 'block' : 'none';
+
+                const promoContainer = document.getElementById('promo-container-2');
+                if (promoContainer) {
+                    const showP1 = String(data.promo2?.show_p1).toLowerCase() !== 'false';
+                    const showP2 = String(data.promo2?.show_p2).toLowerCase() !== 'false';
+                    const anyTicketActive = (showP1 || showP2);
+                    const showPromo = (!showTimer && !showProgress && anyTicketActive);
+
+                    promoContainer.style.display = showPromo ? 'flex' : 'none';
+
+                    if (showPromo && data.promo2) {
+                        document.getElementById('ticket-1-box-2').style.display = showP1 ? 'block' : 'none';
+                        document.getElementById('ticket-2-box-2').style.display = showP2 ? 'block' : 'none';
+                        if (data.promo2.p1_text) document.getElementById('promo-p1-2').innerText = data.promo2.p1_text;
+                        if (data.promo2.p2_text) document.getElementById('promo-p2-2').innerText = data.promo2.p2_text;
+                    }
+                }
+
+                const isSoldOut = String(data.sales2.is_sold_out).toLowerCase() === 'true';
+                const ribbon = document.getElementById('sold-out-ribbon-2');
+                const heroLink = document.getElementById('hero-link-2');
+
+                if (isSoldOut) {
+                    ribbon.style.display = 'block';
+                    heroLink.classList.add('sold-out-active');
+                } else {
+                    ribbon.style.display = 'none';
+                    heroLink.classList.remove('sold-out-active');
+                }
+
+                if (data.sales2.progress_percent) {
+                    const percent = data.sales2.progress_percent;
+                    document.getElementById('progress-bar-2').style.width = `${percent}%`;
+                    document.getElementById('progress-label-2').innerText = `${percent}% Vendido`;
+                    const sub = document.getElementById('progress-sub-2');
+                    if (percent >= 100) {
+                        sub.innerHTML = '<i class="fa-solid fa-fire text-orange-500 mr-1"></i> Esgotado!';
+                    } else {
+                        sub.innerHTML = '<i class="fa-solid fa-bolt text-yellow-400 mr-1"></i> Corra antes que acabe!';
+                    }
+                }
+
+                if (data.sales2.timer_deadline) {
+                    window.globalDeadline2 = new Date(data.sales2.timer_deadline);
+                }
+            }
+
+            // 4. Loja Oficial
+            if (data.store) {
+                if (data.store.title) document.getElementById('store-title').innerText = data.store.title;
+                if (data.store.image) document.getElementById('store-image').src = data.store.image;
+                if (data.store.link) document.getElementById('store-link').href = data.store.link;
+                if (data.store.desc) document.getElementById('store-desc').innerText = data.store.desc;
+            }
+
+            // 5. Close Friends (VIP)
+            if (data.vip) {
+                if (data.vip.title) document.getElementById('vip-title').innerText = data.vip.title;
+                if (data.vip.link) {
+                    document.getElementById('vip-link').href = data.vip.link;
+                    const profileLink = document.getElementById('profile-link');
+                    if (profileLink) profileLink.href = data.vip.link;
+                }
+            }
+        }
+
+        // Countdown Logic
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        const daysEl2 = document.getElementById('days-2');
+        const hoursEl2 = document.getElementById('hours-2');
+        const minutesEl2 = document.getElementById('minutes-2');
+        const secondsEl2 = document.getElementById('seconds-2');
+
+        // Set deadlines
+        window.globalDeadline = new Date();
+        window.globalDeadline.setDate(window.globalDeadline.getDate() + 2);
+
+        window.globalDeadline2 = new Date();
+        window.globalDeadline2.setDate(window.globalDeadline2.getDate() + 5);
+
+        function updateCountdown() {
+            const now = new Date();
+
+            // Timer 1
+            const diff1 = window.globalDeadline - now;
+            updateTimerDisplay(diff1, daysEl, hoursEl, minutesEl, secondsEl);
+
+            // Timer 2
+            const diff2 = window.globalDeadline2 - now;
+            updateTimerDisplay(diff2, daysEl2, hoursEl2, minutesEl2, secondsEl2);
+        }
+
+        function updateTimerDisplay(diff, dEl, hEl, mEl, sEl) {
+            if (!dEl) return;
+            if (diff <= 0) {
+                dEl.innerText = '00';
+                hEl.innerText = '00';
+                mEl.innerText = '00';
+                sEl.innerText = '00';
+                return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+
+            dEl.innerText = d < 10 ? '0' + d : d;
+            hEl.innerText = h < 10 ? '0' + h : h;
+            mEl.innerText = m < 10 ? '0' + m : m;
+            sEl.innerText = s < 10 ? '0' + s : s;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Iniciar carregamento dinâmico
+        loadDynamicContent();
+
+        // Lógica de Cookies
+        function acceptCookies() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            const banner = document.getElementById('cookie-banner');
+            banner.style.opacity = '0';
+            banner.style.transform = 'translateY(100px)';
+            setTimeout(() => banner.classList.remove('show'), 600);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('cookiesAccepted')) {
+                const banner = document.getElementById('cookie-banner');
+                setTimeout(() => {
+                    banner.classList.add('show');
+                }, 2000);
+            }
+        });
+
+        // --- Click Tracking for Heatmap ---
+        const SCRIPT_URL_CLICK = CONFIG.SCRIPT_URL;
+
+        document.addEventListener('click', (e) => {
+            const parentLink = e.target.closest('a');
+            const parentWithId = e.target.closest('[id]');
+
+            // Impede redirecionamento para "#" em links secundários ainda não carregados
+            if (parentLink && parentLink.getAttribute('href') === '#' && parentLink.id !== 'hero-link' && parentLink.id !== 'hero-link-2') {
+                e.preventDefault();
+                return;
+            }
+
+            // Prioridade: ID do Elemento > ID do Link Pai > Nome da Tag
+            let targetName = 'documento';
+
+            if (parentWithId && parentWithId.id) {
+                targetName = parentWithId.id;
+            } else if (parentLink && parentLink.id) {
+                targetName = parentLink.id;
+            } else {
+                targetName = e.target.tagName;
+            }
+
+            const clickData = {
+                action: 'click',
+                x: e.pageX,
+                y: e.pageY,
+                width: window.innerWidth,
+                target: targetName
+            };
+
+            // Usamos 'text/plain' para evitar o PREFLIGHT do CORS no Google Apps Script
+            const payload = JSON.stringify(clickData);
+
+            if (navigator.sendBeacon) {
+                const blob = new Blob([payload], { type: 'text/plain;charset=utf-8' });
+                navigator.sendBeacon(SCRIPT_URL_CLICK, blob);
+            } else {
+                fetch(SCRIPT_URL_CLICK, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: payload
+                }).catch(() => { });
+            }
+        });
+
+        // --- Chatbot Logic ---
+        const chatContainer = document.getElementById('chatbot-container');
+        const chatMessages = document.getElementById('chat-messages');
+        let chatInitialized = false;
+
+        function toggleChat() {
+            chatContainer.classList.toggle('active');
+            if (chatContainer.classList.contains('active') && !chatInitialized) {
+                initChat();
+            }
+        }
+
+        function addMessage(text, side = 'bot', options = []) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${side}-message`;
+            msgDiv.innerText = text;
+            chatMessages.appendChild(msgDiv);
+
+            if (options.length > 0) {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'chat-options';
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt.label;
+                    btn.onclick = () => handleOption(opt);
+                    optionsDiv.appendChild(btn);
+                });
+                chatMessages.appendChild(optionsDiv);
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function initChat() {
+            chatInitialized = true;
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage('Olá! Você está com dúvida na página ou em algum link como compra, melhores amigos ou camisetas?', 'bot', [
+                    { label: 'Dúvida na Página', value: 'pagina' },
+                    { label: 'Link de Compra', value: 'compra' },
+                    { label: 'Melhores Amigos', value: 'vip' },
+                    { label: 'Camisetas', value: 'loja' }
+                ]);
+            }, 1000);
+        }
+
+        function handleOption(opt) {
+            addMessage(opt.label, 'user');
+
+            // Se for uma confirmação de redirecionamento
+            if (opt.value.startsWith('exec_')) {
+                const action = opt.value.replace('exec_', '');
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addMessage('Entendido! Redirecionando...');
+                    setTimeout(() => {
+                        if (action === 'compra') window.location.href = document.getElementById('hero-link').href;
+                        if (action === 'vip') window.location.href = document.getElementById('vip-link').href;
+                        if (action === 'loja') window.location.href = document.getElementById('store-link').href;
+                        if (action === 'pagina') {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            toggleChat();
+                        }
+                    }, 1000);
+                }, 500);
+                return;
+            }
+
+            // Se o usuário desistir do redirecionamento
+            if (opt.value === 'stay') {
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addMessage('Sem problemas! Se tiver outra dúvida, estou à disposição.', 'bot', [
+                        { label: 'Dúvida na Página', value: 'pagina' },
+                        { label: 'Link de Compra', value: 'compra' },
+                        { label: 'Melhores Amigos', value: 'vip' },
+                        { label: 'Camisetas', value: 'loja' }
+                    ]);
+                }, 800);
+                return;
+            }
+
+            // Fluxo principal: Pergunta se quer ser direcionado
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage('Estamos trabalhando para unificar as informações no momento. Gostaria que eu te direcione agora para a página correta?', 'bot', [
+                    { label: 'Sim, me leve lá!', value: 'exec_' + opt.value },
+                    { label: 'Não, continuar conversando', value: 'stay' }
+                ]);
+            }, 1000);
+        }
+
+        function sendManualMessage() {
+            const input = document.getElementById('chat-user-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            input.value = '';
+
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage('Estamos trabalhando para unificar as informações no momento. Irei direcionar para a página apropriada para conseguir sanar esta dúvida.');
+                // Redireciona para o link principal após a mensagem
+                setTimeout(() => {
+                    window.location.href = document.getElementById('hero-link').href;
+                }, 2000);
+            }, 1500);
+        }
+
+        // Permitir Enter no input manual
+        document.getElementById('chat-user-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendManualMessage();
+        });
+
+        // --- Ticker Drag & Animation Logic (JS Driven) ---
+        const tickerArea = document.getElementById('ticker-section');
+        const tickerList = tickerArea ? tickerArea.querySelector('div.flex') : null;
+
+        let tickerOffset = 0;
+        let isDraggingTicker = false;
+        let startMouseX = 0;
+        let lastTransformX = 0;
+        const speed = 0.8; // Velocidade da animação (pixels por frame)
+
+        if (tickerArea && tickerList) {
+            // Remove a animação CSS para não conflitar
+            tickerList.classList.remove('animate-marquee');
+
+            function animateTicker() {
+                if (!isDraggingTicker) {
+                    tickerOffset -= speed;
+
+                    // Lógica de Loop Infinito (metade da largura pois os itens são duplicados)
+                    const halfWidth = tickerList.scrollWidth / 2;
+                    if (Math.abs(tickerOffset) >= halfWidth) {
+                        tickerOffset = 0;
+                    }
+
+                    tickerList.style.transform = `translateX(${tickerOffset}px)`;
+                }
+                requestAnimationFrame(animateTicker);
+            }
+
+            const startDrag = (pageX) => {
+                isDraggingTicker = true;
+                startMouseX = pageX;
+                lastTransformX = tickerOffset;
+            };
+
+            const moveDrag = (pageX) => {
+                if (!isDraggingTicker) return;
+                const walk = pageX - startMouseX;
+                tickerOffset = lastTransformX + walk;
+
+                // Lógica de loop durante o arrasto para não "sumir"
+                const halfWidth = tickerList.scrollWidth / 2;
+                if (tickerOffset > 0) tickerOffset -= halfWidth;
+                if (Math.abs(tickerOffset) > halfWidth) tickerOffset += halfWidth;
+
+                tickerList.style.transform = `translateX(${tickerOffset}px)`;
+            };
+
+            const endDrag = () => {
+                isDraggingTicker = false;
+            };
+
+            // Mouse Events
+            tickerArea.addEventListener('mousedown', (e) => startDrag(e.pageX));
+            window.addEventListener('mousemove', (e) => moveDrag(e.pageX));
+            window.addEventListener('mouseup', endDrag);
+
+            // Touch Events
+            tickerArea.addEventListener('touchstart', (e) => startDrag(e.touches[0].pageX));
+            window.addEventListener('touchmove', (e) => moveDrag(e.touches[0].pageX));
+            window.addEventListener('touchend', endDrag);
+
+            // Inicia o Loop de animação JS
+            requestAnimationFrame(animateTicker);
+        }
+
+        console.log('Script Carregado. Iniciando busca de dados...');
+
+        // --- Proteção Anti-Cópia e Anti-DevTools ---
+        // Bloquear Clique Direito
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Bloquear Atalhos de Teclado
+        document.addEventListener('keydown', (e) => {
+            // Bloquear F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+            // Bloquear Ctrl + Shift + I (Inspecionar)
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+            }
+            // Bloquear Ctrl + Shift + J (Console)
+            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                e.preventDefault();
+            }
+            // Bloquear Ctrl + U (Ver Código Fonte)
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+            }
+            // Bloquear Ctrl + S (Salvar Página)
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+            }
+        });
+
+        // --- Side Ad Carousel Logic ---
+        function initSideAdCarousel() {
+            const adSlides = document.getElementById('ad-slides');
+            const adDots = document.querySelectorAll('.indicator-dot');
+            if (!adSlides || adDots.length === 0) return;
+
+            let currentAd = 0;
+            const totalAds = 3;
+
+            function updateAdCarousel() {
+                // Using precise percentage to avoid rounding issues
+                const offset = -(currentAd * (100 / totalAds));
+                adSlides.style.transform = `translateX(${offset}%)`;
+
+                adDots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentAd);
+                });
+            }
+
+            function nextAd() {
+                currentAd = (currentAd + 1) % totalAds;
+                updateAdCarousel();
+            }
+
+            setInterval(nextAd, 4000);
+        }
+
+        // Initialize carousel
+        initSideAdCarousel();
+
+        // Detector simples de abertura de DevTools (opcional/desafiador)
+        // Isso apenas desencoraja usuários comuns
+        /*
+        let devtools = function() {};
+        devtools.toString = function() {
+            console.log('%cDevTools detectado!', 'color: red; font-size: 20px; font-weight: bold;');
+            return '';
+        };
+        console.log('%c', devtools);
+        */
+    </script>
+
+
+
+</body>
+
+</html>
